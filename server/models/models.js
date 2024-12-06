@@ -38,14 +38,14 @@ const Product = sequelize.define("product", {
   cost: { type: DataTypes.INTEGER }
 })
 
-const Gem = sequelize.define("product", {
+const Gem = sequelize.define("gem", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   type: { type: DataTypes.STRING },
   size: { type: DataTypes.DOUBLE },
   purity: { type: DataTypes.INTEGER }
 })
 
-const Product_Gem = sequelize.define("product-gem", {
+const ProductGem = sequelize.define("product-gem", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
 })
 
@@ -100,17 +100,17 @@ Authorization.belongsTo(Employee);
 Employee.hasMany(Shedule);
 Shedule.belongsTo(Employee);
 
-Product.hasOne(Material);
-Material.belongsTo(Product);
+Material.hasOne(Product);
+Product.belongsTo(Material);
 
-Product.belongsToMany(Gem, {through: Product_Gem});
-Gem.belongsToMany(Product, {through: Product_Gem});
-
-Product.hasOne(SoldProduct);
-SoldProduct.belongsTo(Product);
+Product.belongsToMany(Gem, {through: ProductGem});
+Gem.belongsToMany(Product, {through: ProductGem});
 
 Employee.hasOne(SoldProduct);
 SoldProduct.belongsTo(Employee);
+
+Product.hasOne(SoldProduct);
+SoldProduct.belongsTo(Product);
 
 module.exports = {
   Authorization,
@@ -118,7 +118,7 @@ module.exports = {
   Shedule,
   Material,
   Product,
-  Product_Gem,
   Gem,
+  ProductGem,
   SoldProduct
 };

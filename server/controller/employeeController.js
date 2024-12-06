@@ -42,6 +42,13 @@ class EmployeeController {
         res.json(oneItems);
     }
 
+    async deleteById(req, res) {
+        const id = req.params.id;
+        const items = await Employee.delete({id});
+
+        res.json(items.rows[0]);
+    }
+
 }
 
 module.exports = new EmployeeController();

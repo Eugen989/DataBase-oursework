@@ -22,14 +22,14 @@ class AuthorizationController {
 
     async create(req, res, next) {
         try {
-            const {login, password, role} = req.body;
+            const {login, password, employeeId, role} = req.body;
 
-            if(!login || !password) {
+            if(!login || !password || !employeeId) {
                 return next(ApiError.badRequest("Не все основные поля заполнены"))
             }
 
             if(!req.files || !req.files.img) {
-                console.log("Create data", {login, password, employeeId: 1, role: AuthorizationRoles["admin"]});
+                // console.log("Create data", {login, password, employeeId: 1, role: AuthorizationRoles["admin"]});
                 const newAuthorization = await Authorization.create({login, password, employeeId, role: (role ? role : AuthorizationRoles["admin"])});
 
                 return res.json(newAuthorization);
@@ -41,7 +41,7 @@ class AuthorizationController {
 
             console.log(mail, password);
 
-            const newAuthorization = await Authorization.create({name, surname, mail, password, role: AuthorizationRoles["user"], img: fileName});
+            const newAuthorization = await Authorization.create({login, password, role: AuthorizationRoles["user"], img: fileName});
 
             return res.json(newAuthorization);
         }
@@ -71,22 +71,22 @@ class AuthorizationController {
     async getOneUser(req, res) {
         const id = req.params.id;
 
-        res.json(users.rows[0]);
+        res.json(Authorization.rows[0]);
     }
 
 
     async updateUser(req, res) {
         const {id, name, surname, mail, password} = req.body;
 
-        res.json(users.rows[0]);
+        res.json(Authorization.rows[0]);
     }
 
 
     async deleteUser(req, res) {
         const id = req.params.id;
-        const users = await User.delete({id});
+        const authorization = await Authorization.delete({id});
 
-        res.json(users.rows[0]);
+        res.json(authorization.rows[0]);
     }
 
 
