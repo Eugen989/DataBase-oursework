@@ -1,7 +1,7 @@
 const uuid = require("uuid");
 const path = require("path");
 const ApiError = require("../errors/ApiError");
-const {User} = require("../models/models");
+const {Authorization} = require("../models/models");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
@@ -13,26 +13,26 @@ const generateJWTFromInfi = (id, name, surname, mail, role, img) => {
     return jwt.sign({id, name, surname, mail, role, img}, "key_secret_555", {expiresIn: "24h"});
 }
 
-userRoles = {
-    "user": "Person",
-    "seller": "Seller",
-    "admin": "Administration"
+AuthorizationRoles = {
+    "user": "Employee",
+    "admin": "Admin"
 }
 
-class UserController {
+class AuthorizationController {
 
-    async createUser(req, res, next) {
+    async create(req, res, next) {
         try {
-            const {name, surname,  mail, password} = req.body;
+            const {login, password, role} = req.body;
 
-            if(!name || !surname || !mail || !password) {
+            if(!login || !password) {
                 return next(ApiError.badRequest("Не все основные поля заполнены"))
             }
 
             if(!req.files || !req.files.img) {
-                const newUser = await User.create({name, surname, mail, password, role: userRoles["user"]});
+                console.log("Create data", {login, password, employeeId: 1, role: AuthorizationRoles["admin"]});
+                const newAuthorization = await Authorization.create({login, password, employeeId, role: (role ? role : AuthorizationRoles["admin"])});
 
-                return res.json(newUser);
+                return res.json(newAuthorization);
             }
 
             const {img} = req.files;
@@ -41,9 +41,9 @@ class UserController {
 
             console.log(mail, password);
 
-            const newUser = await User.create({name, surname, mail, password, role: userRoles["user"], img: fileName});
+            const newAuthorization = await Authorization.create({name, surname, mail, password, role: AuthorizationRoles["user"], img: fileName});
 
-            return res.json(newUser);
+            return res.json(newAuthorization);
         }
         catch (e) {
             console.log(e);
@@ -52,11 +52,19 @@ class UserController {
     }
 
 
-    async getUsers(req, res) {
+    async getAll(req, res) {
         // const users = await db.query("SELECT * FROM user");
-        const users = await User.findAll();
+
+        const Authorizations = await Authorization.findAll();
+        // console.log(users);
+
+
+        // let returnData = users.map((user) => {
+        //     return user.name, user.surname;
+        // })
         
-        return res.json(users);
+        return res.json(Authorizations);
+        // return res.json( {message: "work"} );
     }
 
 
@@ -97,7 +105,7 @@ class UserController {
         let newRole = role;
 
         if(!newRole) {
-            newRole = userRoles["user"];
+            newRole = AuthorizationRoles["user"];
         }
 
         const hashPassword = await bcrypt.hash(password, 2);
@@ -133,15 +141,15 @@ class UserController {
         res.json({token});
     }
 
-    async userInfo(req, res, next) {
+    async AuthorizationInfo(req, res, next) {
         try {
             const {id} = req.body;
-            const user = await User.findOne({where: {id}});
-            if (!user) {
+            const authorization = await Authorization.findOne({where: {id}});
+            if (!authorization) {
                 return next(ApiError.internal("Такого пользователя не существует"));
             }
 
-            const token = generateJWTFromInfi(user.id, user.name, user.surname, user.mail, user.role, user.img);
+            const token = generateJWTFromInfi(authorization.id, authorization.name, authorization.surname, authorization.mail, authorization.role);
 
             return res.json({token});
         } catch (e) {
@@ -203,4 +211,4 @@ class UserController {
     
 }
 
-module.exports = new UserController();
+module.exports = new AuthorizationController();
