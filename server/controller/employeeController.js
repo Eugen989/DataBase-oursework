@@ -7,6 +7,8 @@ class EmployeeController {
         try {
             const {salary, fullName, birthday, position} = req.body;
 
+            console.log("Employee data - ", {salary, fullName, birthday, position})
+
             if(!salary) return next(ApiError.badRequest("Не все заполнено поле salary"));
             else if(!fullName) return next(ApiError.badRequest("Не все заполнено поле fullName"));
             else if(!birthday) return next(ApiError.badRequest("Не все заполнено поле birthday"));

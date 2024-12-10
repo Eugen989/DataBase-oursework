@@ -20,6 +20,13 @@ function Home() {
     const userData = toJS(user.user);
     // console.log("Данные пользователя -", ( userData && userData.data ? jwtDecode(userData.data.token) : "нет") );
     // console.log("Токен пользователя -", ( userData && userData.data ? userData.data.token : "нет") );
+    console.log("userData - ", userData);
+    try {
+        console.log("Распаршеный токен пользователя -", (jwtDecode(userData.data.token)));
+    } catch(e) {
+        console.log("Распаршеный токен пользователя - данных нет");
+    }
+    
 
     return (
         <div>

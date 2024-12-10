@@ -34,14 +34,14 @@ const Product = sequelize.define("product", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   brand: { type: DataTypes.STRING },
   weight: { type: DataTypes.INTEGER },
-  size: { type: DataTypes.INTEGER },
+  productSize: { type: DataTypes.INTEGER },
   cost: { type: DataTypes.INTEGER }
 })
 
 const Gem = sequelize.define("gem", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   type: { type: DataTypes.STRING },
-  size: { type: DataTypes.DOUBLE },
+  gemSize: { type: DataTypes.DOUBLE },
   purity: { type: DataTypes.INTEGER }
 })
 

@@ -17,13 +17,14 @@ function Profile() {
     const userInfo = async () => {
         if (user) {
             try {
-                console.log(user.user.data.token);
-                const decodeToken = jwtDecode(user.user.data.token);
+                // console.log(user.user);
+                const decodeToken = jwtDecode(user.user);
                 console.log("Токен -", decodeToken);
 
-                const data = await backend_user_info(decodeToken.id);
-                console.log(jwtDecode(data.data.token));
-                setUserData(jwtDecode(data.data.token));
+                // const data = await backend_user_info(decodeToken.id);
+                // console.log(jwtDecode(data.data));
+                setUserData(decodeToken);
+                console.log("userData from profile - ", userData);
             } catch (error) {
                 console.error('Error fetching user info:', error);
             }
@@ -46,9 +47,9 @@ function Profile() {
                     </div>
 
                     <div class="profile__user-info__text-info">
-                        <p>{userData.name} {userData.surname}</p>
-                        <p>{userData.mail}</p>
-                        <button onClick={ exit }> Выйти </button>
+                        <p> Ваша должность - {userData.position}</p>
+                        <p> Ваша роль - {userData.role}</p>
+                        {/* <button onClick={ exit }> Выйти </button> */}
                     </div> 
                 </div>            
 
@@ -81,10 +82,17 @@ function Profile() {
 
                     <a href="" class="watchmore-link">Смотреть ещё</a>
                 </div>
+
+                <div class="profile__user-info__text-info">
+                    <p>{userData.login}</p>
+                    <p>{userData.fullName}</p>
+                    <button onClick={ exit }> Выйти </button>
+                </div> 
+
             </section>
         ) : (
             <div>
-                Произошла ошибка, данные о пользователе не получены
+                <h2>Вы ещё не зарегестрированы</h2>
             </div>
         )}
 

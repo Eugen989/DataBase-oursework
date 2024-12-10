@@ -8,7 +8,7 @@ import ImgLock from "./../media/lock.png";
 import ImgProfile from "./../media/profile.png";
 import { Context } from "../..";
 import { useNavigate, useLocation } from "react-router-dom";
-import { MAIN_ROUTE, AUTH_ROUTE, LOGIN_ROUTE, REGISTRATION_ROUTE, PROFILE_ROUTE, RESERVATION_ROUTE, RESERVATION_HISTORY_ROUTE, RESERVE_ROUTE, RESTAURANTS_ROUTE, RESTAURANTS_LIST_ROUTE } from "../../utils/consts";
+import { MAIN_ROUTE, AUTH_ROUTE, LOGIN_ROUTE, REGISTRATION_ROUTE, PROFILE_ROUTE, RESERVATION_ROUTE, RESERVATION_HISTORY_ROUTE, RESERVE_ROUTE, RESTAURANTS_ROUTE, RESTAURANTS_LIST_ROUTE, PRODUCT_LIST_ROUTE, ADMIN_ROUTE } from "../../utils/consts";
 
 function Navbar() {
     const location = useLocation();
@@ -31,6 +31,13 @@ function Navbar() {
                 </a>
 
                 <nav class="navbar">
+                    <div class="navbar__item">
+                        <a class={location.pathname === ADMIN_ROUTE ? "navbar__item__link chosen-link" : "navbar__item__link"} onClick={() => { navigate(ADMIN_ROUTE) }}>Админка</a>
+                    </div>
+                    <div class="navbar__item">
+                        <a class={location.pathname === PRODUCT_LIST_ROUTE ? "navbar__item__link chosen-link" : "navbar__item__link"} onClick={() => { navigate(PRODUCT_LIST_ROUTE) }}>Товары</a>
+                    </div>
+
                     <div class="navbar__item">
                         <a class="navbar__item__img-link" onClick={() => { navigate(RESTAURANTS_ROUTE) }}>
                             <img src={ImgRestaurantSymbol} alt="" />

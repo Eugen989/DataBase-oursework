@@ -269,6 +269,7 @@ header {
 }
 .profile__user-info {
   display: flex;
+  width: 10px;
   flex-direction: column;
   align-items: center;
 }
@@ -835,3 +836,15 @@ header {
 .page-hovered {
   background-color: rgb(0, 0, 0);
 }/*# sourceMappingURL=index.css.map */
+
+
+
+.product-card {
+  margin: auto;
+  width: 250px;
+  border: #000000 solid 1px;
+}
+
+.flex-container {
+  display: flex;
+}
