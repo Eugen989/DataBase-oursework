@@ -37,7 +37,7 @@
 
                 if(!req.files || !req.files.img) {
                     // console.log("Create data", {login, password, employeeId: 1, role: authorizationRoles["admin"]});
-                    const newAuthorization = await Authorization.create({login, password, employeeId, role: (role ? role : authorizationRoles["admin"])});
+                    const newAuthorization = await Authorization.create({login, password, employeeId, role: ((await Employee.findOne({where: {id: employeeId}})).dataValues.position == employeePositions[0] ? authorizationRoles["user"] : authorizationRoles["admin"])});
 
                     return res.json(newAuthorization);
                 }
@@ -151,6 +151,7 @@
             const {login, password} = req.body;
 
             const user = await Authorization.findOne({where: {login}});
+            console.log(user);
             const employee = await Employee.findOne({where: {id: user.employeeId}});
             // console.log(user, employee);
             if(!user) {
