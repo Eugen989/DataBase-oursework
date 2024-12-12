@@ -40,7 +40,7 @@ header {
 }
 
 .navbar {
-  width: 611px;
+  width: 311px;
   margin-right: 150px;
   display: flex;
   flex-direction: row;
@@ -283,6 +283,7 @@ header {
   align-items: center;
 }
 .profile__user-info__text-info {
+  width: 300px;
   margin-top: 60px;
 }
 .profile__user-info__text-info p {
@@ -313,8 +314,12 @@ header {
 .profile__promotions-container__promotions__promotion__img-container {
   width: 283px;
   height: 206px;
-  padding: 31px 0px 31px 46px;
-  background-color: rgb(132, 132, 132);
+  /* padding: 31px 0px 31px 46px; */
+  background-color: rgb(61, 58, 58);
+}
+.profile__promotions-container__promotions__promotion__img-container p {
+  color: #cfd9e7;
+  text-align: left;
 }
 .profile__promotions-container__promotions__promotion__description-block {
   width: 610px;
@@ -444,19 +449,19 @@ header {
   gap: 0px;
 }
 
-.list-restaurants {
+.list-products {
   display: flex;
   flex-direction: row;
   align-items: center;
   margin-bottom: 89px;
   gap: 99px;
 }
-.list-restaurants__restaurant {
-  width: 354px;
+.list-products__product {
+  width: 534px;
   background-color: white;
   border-radius: 25px;
   transition: all ease-in-out 0.2s;
-  text-align: center;
+  text-align: left;
   padding: 4px;
   display: flex;
   flex-direction: column;
@@ -475,15 +480,24 @@ header {
   height: 100%;
   border-radius: 25px;
 }
-.list-restaurants__restaurant__description-block {
-  width: 354px;
+.list-products__product__description-block {
+  width: 454px;
   font-size: 32px;
   font-family: "Inter", sans-serif;
   padding: 11px;
   display: flex;
-  align-items: center;
+  align-items: left;
+  text-align: left;
   flex-direction: column;
+  align-items: flex-start;
   gap: 13px;
+}
+.list-products__product__description-block p {
+  text-align: left;
+}
+.list-products__product__description-block .btn {
+  height: 50px;
+  padding: 3px 10px;
 }
 .list-restaurants__restaurant:hover {
   box-shadow: -3px 5px 22px 5px #aaa8a8;
@@ -862,3 +876,98 @@ header {
 .page-hovered {
   background-color: rgb(0, 0, 0);
 }/*# sourceMappingURL=index.css.map */
+
+.admin_title {
+  margin-left: 14vw;
+  margin-bottom: 20px;
+}
+
+.admin_container {
+  width: 1800px;
+  margin: auto;
+  margin-left: 0px;
+  display: flex;
+  justify-content: space-around;
+}
+
+.admin_card_container {
+}
+
+.admin_card_item {
+  margin-bottom: 10px;
+}
+
+.admin_card_item_btn {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-content: center;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.d-flex {
+  display: flex;
+}
+
+.admin__form__input {
+  width: 200px;
+  height: 50px;
+  color: rgba(0, 0, 0, 0.5);
+  font-size: 32px;
+  font-family: "Andika", sans-serif;
+  border: 3px solid #000000;
+  border-radius: 10px;
+  padding-left: 10px;
+  margin-bottom: 5px;
+}
+
+.btn_admin {
+  width: 200px;
+  height: 70px;
+  font-size: 32px;
+  color: white;
+  font-family: "Andika", sans-serif;
+  border-radius: 3.5rem;
+  border-width: 0px;
+  background-color: #5B5050;
+  text-decoration: none;
+  transition: all ease-in-out 0.2s;
+  padding: 18px 25px 20px 29px;
+}
+
+.btn_admin:hover {
+  color: rgb(196, 196, 196);
+  background-color: #4b4343;
+  cursor: pointer;
+  transition: all ease-in-out 0.2s;
+}
+
+.btn_update {
+  width: 200px;
+  height: 70px;
+  font-size: 32px;
+  color: white;
+  font-family: "Andika", sans-serif;
+  border-radius: 3.5rem;
+  border-width: 0px;
+  background-color: #5B5050;
+  text-decoration: none;
+  transition: all ease-in-out 0.2s;
+  padding: 18px 25px 20px 22px;
+}
+
+.btn_update:hover {
+  color: rgb(196, 196, 196);
+  background-color: #4b4343;
+  cursor: pointer;
+  transition: all ease-in-out 0.2s;
+}
+
+.admin_container_btn {
+  width: 300px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}

@@ -8,7 +8,9 @@ import ImgLock from "./../media/lock.png";
 import ImgProfile from "./../media/profile.png";
 import { Context } from "../..";
 import { useNavigate, useLocation } from "react-router-dom";
-import { MAIN_ROUTE, AUTH_ROUTE, LOGIN_ROUTE, REGISTRATION_ROUTE, PROFILE_ROUTE, RESERVATION_ROUTE, RESERVATION_HISTORY_ROUTE, RESERVE_ROUTE, RESTAURANTS_ROUTE, RESTAURANTS_LIST_ROUTE, PRODUCT_LIST_ROUTE, ADMIN_ROUTE } from "../../utils/consts";
+import { MAIN_ROUTE, AUTH_ROUTE, LOGIN_ROUTE, REGISTRATION_ROUTE, PROFILE_ROUTE, PRODUCT_LIST_ROUTE, ADMIN_ROUTE } from "../../utils/consts";
+import { toJS } from "mobx";
+import { jwtDecode } from "jwt-decode";
 
 function Navbar() {
     const location = useLocation();
@@ -18,10 +20,24 @@ function Navbar() {
 
     // console.log("Данные пользователя в navbar -", user.user.data.token);
 
-        useEffect(() => {
-            if(localStorage.getItem("TestData"))
-                setCheckAuth(JSON.parse(localStorage.getItem("TestData")).text);
-        }, []);
+    useEffect(() => {
+        if(user && user.user) {
+            console.log("Navbar -", user.user);
+            // jwtDecode(user.user)
+            // console.log("Navbar -", jwtDecode(user.user));
+        }
+        // if(localStorage.getItem("TestData"))
+        //     setCheckAuth(JSON.parse(localStorage.getItem("TestData")).text);
+    }, []);
+
+    function renderAdminbtn() {
+        let typeRole = null;
+        if(user && user.user) typeRole = jwtDecode(user.user).role;
+        console.log("Navbar role -", typeRole);
+        return (
+            <div></div>
+        )
+    }
 
     return (
         <div>
@@ -31,27 +47,12 @@ function Navbar() {
                 </a>
 
                 <nav class="navbar">
-                    <div class="navbar__item">
+                    {/* <renderAdminbtn /> */}
+                    {/* <div class="navbar__item">
                         <a class={location.pathname === ADMIN_ROUTE ? "navbar__item__link chosen-link" : "navbar__item__link"} onClick={() => { navigate(ADMIN_ROUTE) }}>Админка</a>
-                    </div>
+                    </div> */}
                     <div class="navbar__item">
                         <a class={location.pathname === PRODUCT_LIST_ROUTE ? "navbar__item__link chosen-link" : "navbar__item__link"} onClick={() => { navigate(PRODUCT_LIST_ROUTE) }}>Товары</a>
-                    </div>
-
-                    <div class="navbar__item">
-                        <a class="navbar__item__img-link" onClick={() => { navigate(RESTAURANTS_ROUTE) }}>
-                            <img src={ImgRestaurantSymbol} alt="" />
-                        </a>
-
-                        <a class={location.pathname === RESTAURANTS_ROUTE || location.pathname === RESTAURANTS_LIST_ROUTE ? "navbar__item__link chosen-link" : "navbar__item__link"} onClick={() => { navigate(RESTAURANTS_ROUTE) }}>Рестораны</a>
-                    </div>
-
-                    <div class="navbar__item">
-                        <a class="navbar__item__img-link" onClick={() => { navigate(RESERVATION_ROUTE) }}>
-                            <img src={ImgLock} alt="" />
-                        </a>
-
-                        <a class={location.pathname === RESERVATION_ROUTE || location.pathname === RESERVATION_HISTORY_ROUTE || location.pathname === RESERVE_ROUTE ? "navbar__item__link chosen-link" : "navbar__item__link"} onClick={() => { navigate(RESERVATION_ROUTE) }}>Брони</a>
                     </div>
 
                     <div class="navbar__item">

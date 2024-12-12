@@ -1,10 +1,10 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../..";
 import { jwtDecode } from "jwt-decode";
 import { toJS } from "mobx";
-import restaurantPhoto from "../../components/media/restaurant-photo.png";
+import jewleryPhoto from "../../components/media/jewelryPhoto.jpg";
 import { useNavigate } from "react-router-dom";
-import { RESERVATION_ROUTE } from "../../utils/consts";
+import { REGISTRATION_ROUTE, RESERVATION_ROUTE } from "../../utils/consts";
 
 function Home() {
 
@@ -26,6 +26,11 @@ function Home() {
     } catch(e) {
         console.log("Распаршеный токен пользователя - данных нет");
     }
+    useEffect(() => {
+        console.log("Авторизован - ", user.isAuth);
+
+    }, [])
+    
     
 
     return (
@@ -33,18 +38,26 @@ function Home() {
             <section class="lending">
             <a onClick={ () => { navigate(RESERVATION_ROUTE) } }>
                 <div class="lending__img-container">
-                    <img src={restaurantPhoto} alt="" href=""/>
+                    <img src={jewleryPhoto} alt="" href=""/>
                 </div>
-            </a>            
+            </a>
 
             <div class="lending__text-block">
-                <h2 class="title-text m-bottom-107">Забронируйте столик в<br />
-                    лучших ресторанах города</h2>
+                <h2 class="title-text m-bottom-107">Покупайте бижутерию только<br />
+                    в нашем ювелирном магазине</h2>
 
-                <p class="lending__text-block__description m-bottom-60">Наш сервис поможет вам легко и быстро забронировать столик 
-                    в любимых ресторанах. Экономьте время, сравнивайте варианты и бронируйте столики в несколько кликов!</p>
+                <p class="lending__text-block__description m-bottom-60">В нашем магазине только лучшие товары, высокопробные металлы, и не только.
+                    У нас только опытный персонал, 
+                    который быстро найдет украшение подходящее именно вам! </p>
 
-                <a class="btn" onClick={ () => { navigate(RESERVATION_ROUTE) } }>Забронировать</a>
+                {user.isAuth ? (
+                    <div>
+                        <p class="lending__text-block__description m-bottom-60">Вы зарегестрированы</p>
+                    </div>
+                ) : (
+                <div>
+                    <a class="btn" onClick={ () => { navigate(REGISTRATION_ROUTE) } }>Зарегестрироваться</a>
+                </div>)}
             </div>
         </section>
         </div>

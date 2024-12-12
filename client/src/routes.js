@@ -42,25 +42,5 @@ export const publicRoutes = [
     {
         path: REGISTRATION_ROUTE,
         Component: Auth
-    },
-    {
-        path: RESERVATION_ROUTE,
-        Component: Reservations
-    },
-    {
-        path: RESERVATION_HISTORY_ROUTE,
-        Component: ReservationsHistory
-    },
-    {
-        path: RESERVE_ROUTE,
-        Component: Reserve
-    },
-    {
-        path: RESTAURANTS_ROUTE,
-        Component: Restaurants
-    },
-    {
-        path: RESTAURANTS_LIST_ROUTE,
-        Component: RestaurantsList
     }
 ]

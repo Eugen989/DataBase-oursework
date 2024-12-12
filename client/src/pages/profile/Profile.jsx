@@ -4,11 +4,14 @@ import { useState, useEffect } from 'react';
 import { Context } from "../..";
 import {jwtDecode} from "jwt-decode";
 import { backend_user_info } from "../../http/userApi";
-import { MAIN_ROUTE } from "../../utils/consts";
+import { ADMIN_ROUTE, MAIN_ROUTE } from "../../utils/consts";
+import { useNavigate } from "react-router-dom";
 
 function Profile() {
     const [userData, setUserData] = useState(false);
     const { user } = useContext(Context);
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         userInfo();
@@ -47,8 +50,13 @@ function Profile() {
                     </div>
 
                     <div class="profile__user-info__text-info">
-                        <p> Ваша должность - {userData.position}</p>
-                        <p> Ваша роль - {userData.role}</p>
+                        <p> Ваша должность: {userData.position}</p>
+                        <p> Ваша роль: {userData.role}</p>
+                        {userData.role == "Admin" ? (
+                            <button className="btn" onClick={() => navigate(ADMIN_ROUTE)}>Админка</button>
+                        ) : (
+                            <div></div>
+                        )}
                         {/* <button onClick={ exit }> Выйти </button> */}
                     </div> 
                 </div>            
@@ -59,11 +67,12 @@ function Profile() {
                     <div class="profile__promotions-container__promotions">
                         <div class="profile__promotions-container__promotions__promotion">
                             <div class="profile__promotions-container__promotions__promotion__img-container">
-                                <p>Картинка акции или бонуса</p>
+                                <p>Дата продажи</p>
+                                <p>Сотрудник продавший товар</p>
                             </div>
 
                             <div class="profile__promotions-container__promotions__promotion__description-block">
-                                <p class="profile__promotions-container__promotions__promotion__description-block__text">Описание акции</p>
+                                <p class="profile__promotions-container__promotions__promotion__description-block__text">Проданный товар</p>
                             </div>
                         </div>
                     </div>
@@ -71,22 +80,23 @@ function Profile() {
                     <div class="profile__promotions-container__promotions">
                         <div class="profile__promotions-container__promotions__promotion">
                             <div class="profile__promotions-container__promotions__promotion__img-container">
-                                <p>Картинка акции или бонуса</p>
+                                <p>Дата продажи</p>
+                                <p>Сотрудник продавший товар</p>
                             </div>
 
                             <div class="profile__promotions-container__promotions__promotion__description-block">
-                                <p class="profile__promotions-container__promotions__promotion__description-block__text">Описание акции</p>
+                                <p class="profile__promotions-container__promotions__promotion__description-block__text">Проданный товар</p>
                             </div>
                         </div>
                     </div>
 
-                    <a href="" class="watchmore-link">Смотреть ещё</a>
+                    {/* <a href="" class="watchmore-link">Смотреть ещё</a> */}
                 </div>
 
                 <div class="profile__user-info__text-info">
                     <p>{userData.login}</p>
                     <p>{userData.fullName}</p>
-                    <button onClick={ exit }> Выйти </button>
+                    <button className="btn" onClick={ exit }> Выйти </button>
                 </div> 
 
             </section>

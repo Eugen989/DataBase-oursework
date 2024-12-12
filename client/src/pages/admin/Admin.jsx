@@ -6,6 +6,7 @@ import { toJS } from "mobx";
 import { backend_delete_products, backend_get_products, backend_post_products, backend_update_products } from "../../http/userApi";
 import { ADMIN_ROUTE } from "../../utils/consts";
 import { useNavigate } from "react-router-dom";
+import Navbar from "../../components/navbar/Navbar";
 
 function Admin() {
     const navigate = useNavigate();
@@ -38,10 +39,9 @@ function Admin() {
     useEffect(() => {
         // console.log("Контекст пользователя:", user);
         setFlagUpdate(false);
+        loadProducts();
 
         if (user) {
-            loadProducts();
-
             const token = user.user;
             console.log("Токен:", token);
 
@@ -51,6 +51,7 @@ function Admin() {
                 decodedToken = jwtDecode(token);
                 console.log("Декодированный токен админа:", decodedToken);
                 setCheckAdmin(decodedToken.role);
+                console.log("checkAdmin -",checkAdmin);
                 console.log("Все продукты - ", toJS(user.product));
             } catch (error) {
                 console.error("Ошибка декодирования токена админа:", error);
@@ -159,123 +160,140 @@ function Admin() {
         setFiles(e.target.files[0]);
     }
 
+    const fillingUpdateForm = (item) => {
+        setProductId(item.productId)
+        setBrand(item.brand)
+        setMetal(item.metal);
+        setProbe(item.probe);
+        setWeight(item.weight);
+        setProductSize(item.productSize);
+        setCost(item.cost);
+        setType(item.type);
+        setGemSize(item.gemSize);
+        setPurity(item.purity);
+    }
+
 
 
     return (
         <div>
             { checkAdmin == "Admin" ? (
                 <div>
-                    <h1> Админка </h1>
+                    <h1 className="admin_title"> Админка </h1>
 
-                    {/* <button onClick={input}> Войти </button>
-                    <button onClick={output}> Вывести </button>
-                    <button onClick={exit}> Выйти </button>
-                    <input type="file" onChange={selectFile}></input>
-                    <button>Отправить данные</button> */}
-                    {Array.isArray(toJS(user.product)) && toJS(user.product).map(item => (
-                        <div>
+                    <div className="admin_container">
+
+                        {/* <button onClick={input}> Войти </button>
+                        <button onClick={output}> Вывести </button>
+                        <button onClick={exit}> Выйти </button>
+                        <input type="file" onChange={selectFile}></input>
+                        <button>Отправить данные</button> */}
+                        <div className="admin_card_container">
+                        {Array.isArray(toJS(user.product)) && toJS(user.product).map(item => (
+                            <div className="admin_card_item">
+                                <div class="list-products__product">
+                                    <div class="list-products__product__description-block">
+                                        <p>Номер товара: {item.productId}</p>
+                                        <p>Тип изделия: {item.brand}</p>
+                                        <p>Материал: {item.type}</p>
+                                        <p>Проба: {item.probe}</p>
+                                        <p>Вес: {item.weight}</p>
+                                        <p>Размер: {item.productSize}</p>
+                                        {item.type ? (
+                                        <div>
+                                            <p> Тип камня: {item.type} </p>
+                                            <p> Размер камня: {item.gemSize} </p>
+                                            <p> Чистота камня: {item.purity} карат </p>
+                                        </div>
+                                        ) : (
+                                            <div></div>
+                                        )}
+                                        <p>Стоимость {item.cost}</p>
+                                        <div className="d-flex admin_card_item_btn">
+                                            <button className="btn" onClick={() => fillingUpdateForm(item)}>Изменить</button>
+                                            <button className="btn " onClick={() => btnDelete(item.productId)}>Удалить</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        ))}
+                        </div>
+
+                        {productId ? (
                             <form>
-                                <h3>Добавление</h3>
-                                <div> <input placeholder="Тип" value={brand} onChange={e => setBrand(e.target.value)} /> </div>
-                                <div> <input placeholder="Материал" value={metal} onChange={e => setMetal(e.target.value)} /> </div>
-                                <div> <input placeholder="Проба" value={probe} onChange={e => setProbe(e.target.value)} /> </div>
-                                <div> <input placeholder="Вес" value={weight} onChange={e => setWeight(e.target.value)} /> </div>
-                                <div> <input placeholder="Размер" value={productSize} onChange={e => setProductSize(e.target.value)} /> </div>
-                                <div> <input placeholder="Стоимость" value={cost} onChange={e => setCost(e.target.value)} /> </div>
-                                <div> <input placeholder="Тип" value={type} onChange={e => setType(e.target.value)} /> </div>
-                                <div> <input placeholder="Размер камня" value={gemSize} onChange={e => setGemSize(e.target.value)} /> </div>
-                                <div> <input placeholder="Чистота" value={purity} onChange={e => setPurity(e.target.value)} /> </div>
-                                <button onClick={btnAdd}>Добавить</button>
-                            </form>
-                            <div className="product-card" border="1px">
-                                <div className="flex-container">
-                                    <div> Тип изделия: &nbsp; </div>
-                                    <div>{item.brand}</div>
-                                </div>
-                                <div className="flex-container">
-                                    <div> Материал: &nbsp; </div>
-                                    <div>{item.metal}</div>
-                                </div>
-                                <div className="flex-container">
-                                    <div> Проба: &nbsp; </div>
-                                    <div>{item.probe}</div>
-                                </div>
-                                <div className="flex-container">
-                                    <div> Вес: &nbsp; </div>
-                                    <div>{item.weight}</div>
-                                </div>
-                                <div className="flex-container">
-                                    <div> Размер: &nbsp; </div>
-                                    <div>{item.productSize}</div>
-                                </div>
-                                <div className="flex-container">
-                                    <div> Стоимость: &nbsp; </div>
-                                    <div>{item.cost} р.</div>
-                                </div>
-                                {item.type ? (
+                                <h4>Обновление товара</h4>
+                                <div> <input className="admin__form__input" placeholder="Тип" value={brand} onChange={e => setBrand(e.target.value)} /> </div>
+                                <div> <input className="admin__form__input" placeholder="Материал" value={metal} onChange={e => setMetal(e.target.value)} /> </div>
+                                <div> <input className="admin__form__input" placeholder="Проба" value={probe} onChange={e => setProbe(e.target.value)} /> </div>
+                                <div> <input className="admin__form__input" placeholder="Вес" value={weight} onChange={e => setWeight(e.target.value)} /> </div>
+                                <div> <input className="admin__form__input" placeholder="Размер изд." value={productSize} onChange={e => setProductSize(e.target.value)} /> </div>
+                                <div> <input className="admin__form__input" placeholder="Стоимость" value={cost} onChange={e => setCost(e.target.value)} /> </div>
+                                {(type || purity || gemSize) ? (
                                     <div>
-                                        <div className="flex-container">
-                                            <div> Тип камня: &nbsp; </div>
-                                            <div>{item.type}</div>
-                                        </div>
-                                        <div className="flex-container">
-                                            <div> Размер камня: &nbsp; </div>
-                                            <div>{item.gemSize}</div>
-                                        </div>
-                                        <div className="flex-container">
-                                            <div> Чистота камня: &nbsp; </div>
-                                            <div>{item.purity} карат</div>
-                                        </div>
+                                        <div> <input className="admin__form__input" placeholder="Тип" value={type} onChange={e => setType(e.target.value)} /> </div>
+                                        <div> <input className="admin__form__input" placeholder="Размер кам." value={gemSize} onChange={e => setGemSize(e.target.value)} /> </div>
+                                        <div> <input className="admin__form__input" placeholder="Чистота" value={purity} onChange={e => setPurity(e.target.value)} /> </div>
                                     </div>
                                 ) : (
                                     <div> </div>
-                                )}
-                                
-
-                                <button onClick={() => {
-                                    setProductId(item.productId)
-                                    setBrand(item.brand)
-                                    setMetal(item.metal);
-                                    setProbe(item.probe);
-                                    setWeight(item.weight);
-                                    setProductSize(item.productSize);
-                                    setCost(item.cost);
-                                    setType(item.type);
-                                    setGemSize(item.gemSize);
-                                    setPurity(item.purity);
-
-                                    console.log("Данные камня - ", type, gemSize, purity);
-                                }}>Изменить</button>
-                                <button onClick={() => btnDelete(item.productId)}>Удалить</button>
-                            </div>
-                        </div>
-                        
-                    ))}
-                    {productId ? (
-                        <form>
-                            <h4>Updating</h4>
-                            <div> <input placeholder="Тип" value={brand} onChange={e => setBrand(e.target.value)} /> </div>
-                            <div> <input placeholder="Материал" value={metal} onChange={e => setMetal(e.target.value)} /> </div>
-                            <div> <input placeholder="Проба" value={probe} onChange={e => setProbe(e.target.value)} /> </div>
-                            <div> <input placeholder="Вес" value={weight} onChange={e => setWeight(e.target.value)} /> </div>
-                            <div> <input placeholder="Размер" value={productSize} onChange={e => setProductSize(e.target.value)} /> </div>
-                            <div> <input placeholder="Стоимость" value={cost} onChange={e => setCost(e.target.value)} /> </div>
-                            {(type || purity || gemSize) ? (
-                                <div>
-                                    <div> <input placeholder="Тип" value={type} onChange={e => setType(e.target.value)} /> </div>
-                                    <div> <input placeholder="Размер камня" value={gemSize} onChange={e => setGemSize(e.target.value)} /> </div>
-                                    <div> <input placeholder="Чистота" value={purity} onChange={e => setPurity(e.target.value)} /> </div>
+                                ) }
+                                <div className="admin_container_btn">
+                                    <button className="btn_update" onClick={btnUpdate}>Отправить</button>
+                                    <button className="btn_update" onClick={() => setProductId()}>Закрыть</button>
                                 </div>
-                            ) : (
-                                <div> </div>
-                            ) }
-                            <button onClick={btnUpdate}>Отправить изменения</button>
-                            <button onClick={() => setProductId()}>Закрыть</button>
-                        </form>
-                    ) : (
-                        <div> </div>
-                    )}
+                            </form>
+                        ) : (
+                            <div>
+                                <form>
+                                    <h3>Добавление товара</h3>
+                                    <div> <input className="admin__form__input" placeholder="Тип" value={brand} onChange={e => setBrand(e.target.value)} /> </div>
+                                    <div> <input className="admin__form__input" placeholder="Материал" value={metal} onChange={e => setMetal(e.target.value)} /> </div>
+                                    <div> <input className="admin__form__input" placeholder="Проба" value={probe} onChange={e => setProbe(e.target.value)} /> </div>
+                                    <div> <input className="admin__form__input" placeholder="Вес" value={weight} onChange={e => setWeight(e.target.value)} /> </div>
+                                    <div> <input className="admin__form__input" placeholder="Размер изд." value={productSize} onChange={e => setProductSize(e.target.value)} /> </div>
+                                    <div> <input className="admin__form__input" placeholder="Стоимость" value={cost} onChange={e => setCost(e.target.value)} /> </div>
+                                    <div> <input className="admin__form__input" placeholder="Тип" value={type} onChange={e => setType(e.target.value)} /> </div>
+                                    <div> <input className="admin__form__input" placeholder="Размер кам." value={gemSize} onChange={e => setGemSize(e.target.value)} /> </div>
+                                    <div> <input className="admin__form__input" placeholder="Чистота" value={purity} onChange={e => setPurity(e.target.value)} /> </div>
+                                    <button className="btn_admin" onClick={btnAdd}>Добавить</button>
+                                </form>
+                            </div>
+                        )}
+                    
+                    <div className="admin_card_container">
+                        {Array.isArray(toJS(user.product)) && toJS(user.product).map(item => (
+                            <div className="admin_card_item">
+                                <div class="list-products__product">
+                                    <div class="list-products__product__description-block">
+                                        <p>Номер товара: {item.productId}</p>
+                                        <p>Тип изделия: {item.brand}</p>
+                                        <p>Материал: {item.type}</p>
+                                        <p>Проба: {item.probe}</p>
+                                        <p>Вес: {item.weight}</p>
+                                        <p>Размер: {item.productSize}</p>
+                                        {item.type ? (
+                                        <div>
+                                            <p> Тип камня: {item.type} </p>
+                                            <p> Размер камня: {item.gemSize} </p>
+                                            <p> Чистота камня: {item.purity} карат </p>
+                                        </div>
+                                        ) : (
+                                            <div></div>
+                                        )}
+                                        <p>Стоимость {item.cost}</p>
+                                        <div className="d-flex admin_card_item_btn">
+                                            <button className="btn" onClick={() => fillingUpdateForm(item)}>Изменить</button>
+                                            <button className="btn " onClick={() => btnDelete(item.productId)}>Удалить</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        ))}
+                        </div>
 
+                    </div>
                 </div>
             ) : (
                 <div>Вы попали сюда по ошибке</div>

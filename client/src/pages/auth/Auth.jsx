@@ -32,7 +32,7 @@ const Auth = observer(() => {
 
     const { user } = useContext(Context);
 
-    const role = userRoles["admin"];
+    const role = userRoles["user"];
     // const salary = userPositions["Programmer"];
 
     const click = async (e) => {

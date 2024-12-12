@@ -37,18 +37,19 @@
 
                 if(!req.files || !req.files.img) {
                     // console.log("Create data", {login, password, employeeId: 1, role: authorizationRoles["admin"]});
-                    const newAuthorization = await Authorization.create({login, password, employeeId, role: ((await Employee.findOne({where: {id: employeeId}})).dataValues.position == employeePositions[0] ? authorizationRoles["user"] : authorizationRoles["admin"])});
+                    console.log("Authorization role -", (({where: {id: employeeId}})).dataValues.position);
+                    const newAuthorization = await Authorization.create({login, password, employeeId, role: ((await Employee.findOne({where: {id: employeeId}})).dataValues.position == employeePositions[0] ? authorizationRoles["admin"] : authorizationRoles["user"])});
 
                     return res.json(newAuthorization);
                 }
 
-                const {img} = req.files;
-                let fileName = uuid.v4 + ".jpg";
-                img.mv(path.resolve(__dirname, "..", "static", fileName));
+                // const {img} = req.files;
+                // let fileName = uuid.v4 + ".jpg";
+                // img.mv(path.resolve(__dirname, "..", "static", fileName));
 
-                console.log(login, password);
+                // console.log(login, password);
 
-                const newAuthorization = await Authorization.create({login, password, role: authorizationRoles["user"], img: fileName});
+                // const newAuthorization = await Authorization.create({login, password, role: authorizationRoles["user"], img: fileName});
 
                 return res.json(newAuthorization);
             }
@@ -106,7 +107,7 @@
             const {fullName, birthday, position, login, password, role} = req.body;
 
             console.log({fullName, birthday, position, login, password, role})
-            if(!fullName || !birthday || !position || !login || !password || !role) {
+            if(!fullName || !birthday || !position || !login || !password) {
                 return next(ApiError.badRequest("Некоректный данные указанные при регистрации"));
             }
 
@@ -120,12 +121,14 @@
                 candidate = await Employee.create({salary: employeePositions[position], fullName, birthday, position});
             }
 
-            let newRole = role;
-            if(!newRole) {
-                newRole = authorizationRoles["user"];
-            } else if (position == employeePositions["Programmer"]) {
+            let newRole;
+            console.log("Position people -", position)
+            if (position == employeePositions["Programmer"]) {
                 newRole = authorizationRoles["admin"];
+            } else if(!newRole) {
+                newRole = authorizationRoles["user"];
             }
+            console.log("Position people role -", newRole)
 
             let user;
             const hashPassword = await bcrypt.hash(password, 2);

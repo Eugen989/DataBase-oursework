@@ -78,11 +78,15 @@ header {
   gap: 81px;
 }
 .lending__img-container {
-  max-width: 988px;
-  max-height: 686px;
+  width: 988px;
+  height: 686px;
   overflow: hidden;
   border-radius: 50px;
   margin-left: 56px;
+}
+.lending__img-container img {
+  width: 988px;
+  height: 686px;
 }
 .lending__img-container:hover {
   cursor: pointer;
@@ -305,7 +309,7 @@ header {
   width: 283px;
   height: 206px;
   padding: 31px 0px 31px 46px;
-  background-color: rgb(132, 132, 132);
+  background-color: rgb(189, 181, 181);
 }
 .profile__promotions-container__promotions__promotion__description-block {
   width: 610px;
