@@ -6,6 +6,7 @@ export default class UserStore {
         this._isAdmin = false;
         this._user = {};
         this._product = {};
+        this._dataAndTime = {};
         makeAutoObservable(this);
         
     }
@@ -26,6 +27,10 @@ export default class UserStore {
         this._product = product
     }
 
+    setDataAndTime(dataAndTime) {
+        this._dataAndTime = dataAndTime;
+    }
+
     get isAuth() {
         return this._isAuth;
     }
@@ -42,10 +47,15 @@ export default class UserStore {
         return this._product;
     }
 
+    get dataAndTime() {
+        return this._dataAndTime;
+    }
+
     clearUser() {
         this._isAuth = false;
         this._isAdmin = false;
         this._user = {};
+        this._dataAndTime = {};
     }
 
     clearProduct() {

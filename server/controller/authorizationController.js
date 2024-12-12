@@ -37,19 +37,18 @@
 
                 if(!req.files || !req.files.img) {
                     // console.log("Create data", {login, password, employeeId: 1, role: authorizationRoles["admin"]});
-                    console.log("Authorization role -", (({where: {id: employeeId}})).dataValues.position);
-                    const newAuthorization = await Authorization.create({login, password, employeeId, role: ((await Employee.findOne({where: {id: employeeId}})).dataValues.position == employeePositions[0] ? authorizationRoles["admin"] : authorizationRoles["user"])});
+                    const newAuthorization = await Authorization.create({login, password, employeeId, role: ((await Employee.findOne({where: {id: employeeId}})).dataValues.position == employeePositions[0] ? authorizationRoles["user"] : authorizationRoles["admin"])});
 
                     return res.json(newAuthorization);
                 }
 
-                // const {img} = req.files;
-                // let fileName = uuid.v4 + ".jpg";
-                // img.mv(path.resolve(__dirname, "..", "static", fileName));
+                const {img} = req.files;
+                let fileName = uuid.v4 + ".jpg";
+                img.mv(path.resolve(__dirname, "..", "static", fileName));
 
-                // console.log(login, password);
+                console.log(login, password);
 
-                // const newAuthorization = await Authorization.create({login, password, role: authorizationRoles["user"], img: fileName});
+                const newAuthorization = await Authorization.create({login, password, role: authorizationRoles["user"], img: fileName});
 
                 return res.json(newAuthorization);
             }
@@ -107,7 +106,7 @@
             const {fullName, birthday, position, login, password, role} = req.body;
 
             console.log({fullName, birthday, position, login, password, role})
-            if(!fullName || !birthday || !position || !login || !password) {
+            if(!fullName || !birthday || !position || !login || !password || !role) {
                 return next(ApiError.badRequest("Некоректный данные указанные при регистрации"));
             }
 
@@ -122,13 +121,12 @@
             }
 
             let newRole;
-            console.log("Position people -", position)
-            if (position == employeePositions["Programmer"]) {
+            if (position == "Programmer") {
                 newRole = authorizationRoles["admin"];
-            } else if(!newRole) {
+            }
+            else {
                 newRole = authorizationRoles["user"];
             }
-            console.log("Position people role -", newRole)
 
             let user;
             const hashPassword = await bcrypt.hash(password, 2);
@@ -210,7 +208,7 @@
         //         const { img } = req.files;
         //         const fileName = uuid.v4() + ".jpg";
         //         const filePath = path.resolve(__dirname, "..", "static", fileName);
-        
+            
         //         img.mv(filePath, async (err) => {
         //             if (err) {
         //                 return next(ApiError.internal("Ошибка при загрузке файла"));

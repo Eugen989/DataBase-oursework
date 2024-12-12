@@ -1,21 +1,54 @@
-// Profile.jsx
 import React, { useContext } from "react";
 import { useState, useEffect } from 'react';
 import { Context } from "../..";
 import {jwtDecode} from "jwt-decode";
-import { backend_user_info } from "../../http/userApi";
+import { backend_get_products, backend_get_sold_products, backend_user_info } from "../../http/userApi";
 import { ADMIN_ROUTE, MAIN_ROUTE } from "../../utils/consts";
 import { useNavigate } from "react-router-dom";
+import { toJS } from "mobx";
 
 function Profile() {
-    const [userData, setUserData] = useState(false);
     const { user } = useContext(Context);
+
+    const [userData, setUserData] = useState(false);
+
+    const [soldProducts, setSoldProducts] = useState();
 
     const navigate = useNavigate();
 
     useEffect(() => {
         userInfo();
+        loadProducts();
     }, []);
+
+    const loadProducts = async () => {
+        let soldData = await backend_get_sold_products();
+        let productData = await backend_get_products();
+
+        console.log("soldData -", soldData);
+        console.log("productData -", productData);
+
+        for (let i = 0; i < soldData.length; i++) {
+            if (soldData[i].employeeId == userData.id) {
+                soldData.splice(i, 1);
+                i--;
+            } else {
+                for (let j = 0; j < productData.length; j++) {
+                    if (soldData[i].productId == productData[j].productId) {
+                        soldData[i].brand = productData[j].brand;
+                        soldData[i].metal = productData[j].metal;
+                        soldData[i].timeAndDate = productData[j].timeAndDate;
+                    }
+                }
+            }
+        }
+            
+
+        user.setProduct(soldData);
+
+        console.log("new soldData -", soldProducts);
+
+    }
 
     const userInfo = async () => {
         if (user) {
@@ -62,33 +95,29 @@ function Profile() {
                 </div>            
 
                 <div class="profile__promotions-container">
-                    <h2 class="profile__promotions-container__description">Ваши акции и бонусы:</h2>
+                    <h2 class="profile__promotions-container__description">Ваши продажи:</h2>
 
-                    <div class="profile__promotions-container__promotions">
-                        <div class="profile__promotions-container__promotions__promotion">
-                            <div class="profile__promotions-container__promotions__promotion__img-container">
-                                <p>Дата продажи</p>
-                                <p>Сотрудник продавший товар</p>
-                            </div>
+                    
+                    {user.product && user.product.length != 0 && Array.isArray(toJS(user.product)) && toJS(user.product).map(item => (
+                        <div class="profile__promotions-container__promotions">
+                            <div class="profile__promotions-container__promotions__promotion">
+                                <div class="profile__promotions-container__promotions__promotion__img-container">
+                                    <p>Дата: {item.timeAndDate ? item.timeAndDate.slice(0, 10) : "Дата не указана"}</p>
+                                    <p>Id товара: {item.productId}</p>
+                                </div>
 
-                            <div class="profile__promotions-container__promotions__promotion__description-block">
-                                <p class="profile__promotions-container__promotions__promotion__description-block__text">Проданный товар</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="profile__promotions-container__promotions">
-                        <div class="profile__promotions-container__promotions__promotion">
-                            <div class="profile__promotions-container__promotions__promotion__img-container">
-                                <p>Дата продажи</p>
-                                <p>Сотрудник продавший товар</p>
-                            </div>
-
-                            <div class="profile__promotions-container__promotions__promotion__description-block">
-                                <p class="profile__promotions-container__promotions__promotion__description-block__text">Проданный товар</p>
+                                <div class="profile__promotions-container__promotions__promotion__description-block">
+                                    <div class="profile__promotions-container__promotions__promotion__description-block__text">
+                                        <h5>Проданный товар</h5>
+                                        <p>Тип: {item.brand}</p>
+                                        <p>Материал: {item.metal}</p>
+                                        <p>Стоимость: {item.cost}</p>
+                                        <p>Скидка: {item.discount}</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    ))}
 
                     {/* <a href="" class="watchmore-link">Смотреть ещё</a> */}
                 </div>

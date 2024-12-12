@@ -3,7 +3,7 @@ import axios from "axios";
 import { Context } from "../..";
 import {jwtDecode} from "jwt-decode"; // исправленный импорт
 import { toJS } from "mobx";
-import { backend_delete_products, backend_get_products, backend_post_products, backend_update_products } from "../../http/userApi";
+import { backend_delete_products, backend_get_products, backend_post_products, backend_update_products, backend_get_shedules, backend_get_user_shedules, backend_update_shedules, backend_post_shedules, backend_delete_shedules } from "../../http/userApi";
 import { ADMIN_ROUTE } from "../../utils/consts";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/navbar/Navbar";
@@ -27,6 +27,13 @@ function Admin() {
     const [gemSize, setGemSize] = useState();
     const [purity, setPurity] = useState();
 
+    const [shedules, setShedules] = useState();
+    const [sheduleId, setSheduleId] = useState();
+    const [sheduleData, setSheduleData] = useState();
+    const [sheduleWorkStart, setSheduleWorkStart] = useState();
+    const [sheduleWorkEnd, setSheduleWorkEnd] = useState();
+    const [sheduleEmployeeId, setSheduleEmployeeId] = useState();
+
     const [flagUpdate, setFlagUpdate] = useState();
     
     const { user } = useContext(Context);
@@ -36,10 +43,20 @@ function Admin() {
         user.setProduct(data);
     }
 
+    const loadShedules = async () => {
+        let data = await backend_get_shedules();
+        setShedules(data);
+        // console.log(shedules);
+        // console.log("loadShedules -", shedules);
+        // user.setDataAndTime(data);
+    }
+
     useEffect(() => {
         // console.log("Контекст пользователя:", user);
         setFlagUpdate(false);
         loadProducts();
+        loadShedules();
+        // setShedules
 
         if (user) {
             const token = user.user;
@@ -82,7 +99,7 @@ function Admin() {
         // }
     }, [user]);
 
-    const btnAdd = async (e) => {
+    const btnAddProduct = async (e) => {
         e.preventDefault();
         try {
             let addData = {
@@ -101,17 +118,42 @@ function Admin() {
             navigate(ADMIN_ROUTE);
         } catch (error) {
             console.error(error);
-            alert("Не получилось добавить данные.");
+            alert("Не получилось добавить данные продукта.");
         }
     }
 
-    const btnDelete = async (id) => {
+    const btnAddShedule = async (e) => {
+        e.preventDefault();
+        try {
+            let addData = {
+                employeeId: sheduleEmployeeId,
+                data: sheduleData,
+                workStart: sheduleWorkStart,
+                workEnd: sheduleWorkEnd
+            }
+            let data = await backend_post_shedules(sheduleId, addData);
+            console.log(data);
+            await loadShedules();
+            navigate(ADMIN_ROUTE);
+        } catch (error) {
+            console.error(error);
+            alert("Не получилось добавить данные продукта.");
+        }
+    }
+
+    const btnDeleteProduct = async (id) => {
         await backend_delete_products(id);
         await loadProducts();
         navigate(ADMIN_ROUTE);
     }
 
-    const btnUpdate = async (e) => {
+    const btnDeleteShedule = async (id) => {
+        await backend_delete_shedules(id);
+        await loadShedules();
+        navigate(ADMIN_ROUTE);
+    }
+
+    const btnUpdateProduct = async (e) => {
         e.preventDefault();
         try {
             let updateData = {
@@ -127,12 +169,34 @@ function Admin() {
             }
             // console.log("update data - ", updateData);
             // console.log("Id data - ", productId);
-            let data = await backend_update_products(productId, updateData);
+            let data = await backend_get_user_shedules(productId, updateData);
             await loadProducts();
             navigate(ADMIN_ROUTE);
         } catch (error) {
             console.log(e);
             alert("Не получилось обновить данные.");
+        }
+    }
+
+    const btnUpdateShedule = async (e) => {
+        e.preventDefault();
+        try {
+            let updateData = {
+                employeeId: sheduleEmployeeId,
+                data: sheduleData,
+                workStart: sheduleWorkStart,
+                workEnd: sheduleWorkEnd
+            }
+
+            // console.log("update shedule data - ", updateData);
+            // console.log("Id shedule data - ", sheduleId);
+
+            await backend_update_shedules(sheduleId, updateData);
+            await loadShedules();
+            navigate(ADMIN_ROUTE);
+        } catch (error) {
+            console.error(error);
+            alert("Не получилось добавить данные расписания.");
         }
     }
 
@@ -152,7 +216,7 @@ function Admin() {
     function exit() {
         console.log("Тестовые данные удалены");
         localStorage.removeItem("TestData");
-        setCheckAdmin(null); // очищаем состояние checkAdmin при выходе
+        setCheckAdmin(null);
     }
 
     const selectFile = (e) => {
@@ -171,6 +235,14 @@ function Admin() {
         setType(item.type);
         setGemSize(item.gemSize);
         setPurity(item.purity);
+    }
+
+    const fillingSheduleUpdateForm = (item) => {
+        setSheduleId(item.id);
+        setSheduleData(item.data);
+        setSheduleWorkStart(item.workStart);
+        setSheduleWorkEnd(item.workEnd);
+        setSheduleEmployeeId(item.employeeId);
     }
 
 
@@ -211,7 +283,7 @@ function Admin() {
                                         <p>Стоимость {item.cost}</p>
                                         <div className="d-flex admin_card_item_btn">
                                             <button className="btn" onClick={() => fillingUpdateForm(item)}>Изменить</button>
-                                            <button className="btn " onClick={() => btnDelete(item.productId)}>Удалить</button>
+                                            <button className="btn " onClick={() => btnDeleteProduct(item.productId)}>Удалить</button>
                                         </div>
                                     </div>
                                 </div>
@@ -239,7 +311,7 @@ function Admin() {
                                     <div> </div>
                                 ) }
                                 <div className="admin_container_btn">
-                                    <button className="btn_update" onClick={btnUpdate}>Отправить</button>
+                                    <button className="btn_update" onClick={btnUpdateProduct}>Отправить</button>
                                     <button className="btn_update" onClick={() => setProductId()}>Закрыть</button>
                                 </div>
                             </form>
@@ -256,43 +328,56 @@ function Admin() {
                                     <div> <input className="admin__form__input" placeholder="Тип" value={type} onChange={e => setType(e.target.value)} /> </div>
                                     <div> <input className="admin__form__input" placeholder="Размер кам." value={gemSize} onChange={e => setGemSize(e.target.value)} /> </div>
                                     <div> <input className="admin__form__input" placeholder="Чистота" value={purity} onChange={e => setPurity(e.target.value)} /> </div>
-                                    <button className="btn_admin" onClick={btnAdd}>Добавить</button>
+                                    <button className="btn_admin" onClick={btnAddProduct}>Добавить</button>
                                 </form>
                             </div>
                         )}
                     
+
+
                     <div className="admin_card_container">
-                        {Array.isArray(toJS(user.product)) && toJS(user.product).map(item => (
+                        {Array.isArray(toJS(shedules)) && toJS(shedules).map(item => (
                             <div className="admin_card_item">
                                 <div class="list-products__product">
                                     <div class="list-products__product__description-block">
-                                        <p>Номер товара: {item.productId}</p>
-                                        <p>Тип изделия: {item.brand}</p>
-                                        <p>Материал: {item.type}</p>
-                                        <p>Проба: {item.probe}</p>
-                                        <p>Вес: {item.weight}</p>
-                                        <p>Размер: {item.productSize}</p>
-                                        {item.type ? (
-                                        <div>
-                                            <p> Тип камня: {item.type} </p>
-                                            <p> Размер камня: {item.gemSize} </p>
-                                            <p> Чистота камня: {item.purity} карат </p>
-                                        </div>
-                                        ) : (
-                                            <div></div>
-                                        )}
-                                        <p>Стоимость {item.cost}</p>
+                                        <p>Id: {item.id}</p>
+                                        <p>Дата: {item.data}</p>
+                                        <p>Начало работы: {item.workStart}</p>
+                                        <p>Конец работы: {item.workEnd}</p>
                                         <div className="d-flex admin_card_item_btn">
-                                            <button className="btn" onClick={() => fillingUpdateForm(item)}>Изменить</button>
-                                            <button className="btn " onClick={() => btnDelete(item.productId)}>Удалить</button>
+                                            <button className="btn" onClick={() => fillingSheduleUpdateForm(item)}>Изменить</button>
+                                            <button className="btn " onClick={() => btnDeleteShedule(item.id)}>Удалить</button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            
                         ))}
-                        </div>
-
+                    </div>
+                    
+                    {sheduleId ? (
+                            <form>
+                                <h4>Обновление расписания</h4>
+                                <div> <input className="admin__form__input" placeholder="Id user" value={sheduleEmployeeId} onChange={e => setSheduleEmployeeId(e.target.value)} /> </div>
+                                <div> <input className="admin__form__input" placeholder="Data" value={sheduleData} type="date" onChange={e => setSheduleData(e.target.value)} /> </div>
+                                <div> <input className="admin__form__input" placeholder="Start" value={sheduleWorkStart} onChange={e => setSheduleWorkStart(e.target.value)} /> </div>
+                                <div> <input className="admin__form__input" placeholder="End" value={sheduleWorkEnd} onChange={e => setSheduleWorkEnd(e.target.value)} /> </div>
+                                <div className="admin_container_btn">
+                                    <button className="btn_update" onClick={btnUpdateShedule}>Отправить</button>
+                                    <button className="btn_update" onClick={() => setSheduleId()}>Закрыть</button>
+                                </div>
+                            </form>
+                        ) : (
+                            <div>
+                                <form>
+                                    <h3>Добавление расписания</h3>
+                                    <div> <input className="admin__form__input" placeholder="Id user" value={sheduleEmployeeId} onChange={e => setSheduleEmployeeId(e.target.value)} /> </div>
+                                    <div> <input className="admin__form__input" placeholder="Data" value={sheduleData} type="date" onChange={e => setSheduleData(e.target.value)} /> </div>
+                                    <div> <input className="admin__form__input" placeholder="Start" value={sheduleWorkStart} onChange={e => setSheduleWorkStart(e.target.value)} /> </div>
+                                    <div> <input className="admin__form__input" placeholder="End" value={sheduleWorkEnd} onChange={e => setSheduleWorkEnd(e.target.value)} /> </div>
+                                    <button className="btn_admin" onClick={btnAddShedule}>Добавить</button>
+                                </form>
+                            </div>
+                        )}
                     </div>
                 </div>
             ) : (

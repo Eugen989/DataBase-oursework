@@ -1,5 +1,5 @@
     const ApiError = require("../errors/ApiError");
-    const {Reviews, Product, Material, Gem, ProductGem} = require("../models/models")
+    const {Reviews, Product, Material, Gem, ProductGem, Employee, SoldProduct} = require("../models/models")
 
     function findMaterialForId(materialItem, id) {
         for (let i = 0; i < materialItem.length; i++)
@@ -159,12 +159,23 @@
             res.json(updatedData);
         }
 
+        async sellById(req, res) {
+            const {idProduct, idEmployee} = req.body;
+            console.log(idProduct, idEmployee);
+
+            const productItem = (await Product.findOne({where: {id: idProduct}})).dataValues;
+
+            await SoldProduct.create({timeAndDate: new Date(), cost: productItem.cost, discount: 0, employeeId: idEmployee, productId: idProduct});
+
+            res.json({message: "ok"})
+        }
+
         async deleteById(req, res) {
             const {id} = req.body;
             // console.log(id);
             const deletedCount = await Product.destroy({where: {id}});
 
-            console.log("Delete successful");
+            console.log("Delete product successful");
             res.json(deletedCount);
         }
 

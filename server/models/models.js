@@ -19,7 +19,7 @@ const Employee = sequelize.define("employee", {
 
 const Shedule = sequelize.define("shedule", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  day: { type: DataTypes.STRING },
+  data: { type: DataTypes.DATE },
   workStart: { type: DataTypes.TIME },
   workEnd: { type: DataTypes.TIME },
 })

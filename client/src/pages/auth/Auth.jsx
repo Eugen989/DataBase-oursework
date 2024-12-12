@@ -1,4 +1,5 @@
 import React, { useContext, useState } from "react";
+import {jwtDecode} from "jwt-decode";
 import { backend_get_products, backend_login, backend_registration } from "../../http/userApi";
 import { useNavigate, useLocation } from "react-router-dom";
 import { AUTORIZATION_ROUTE, MAIN_ROUTE, REGISTRATION_ROUTE } from "../../utils/consts";
@@ -54,7 +55,7 @@ const Auth = observer(() => {
             // console.log("Все продукты - ", toJS(user.product));
 
             const userData = toJS(user.user);
-            console.log("Данные пользователя -", userData);
+            console.log("Данные пользователя -", jwtDecode(userData));
 
             localStorage.setItem("token", JSON.stringify({token: userData}));
             

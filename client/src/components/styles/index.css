@@ -318,6 +318,8 @@ header {
   background-color: rgb(61, 58, 58);
 }
 .profile__promotions-container__promotions__promotion__img-container p {
+  font-size: 24px;
+  margin-bottom: 5px;
   color: #cfd9e7;
   text-align: left;
 }
@@ -330,6 +332,13 @@ header {
 .profile__promotions-container__promotions__promotion__description-block__text {
   font-size: 32px;
   font-family: "Inter", sans-serif;
+}
+.profile__promotions-container__promotions__promotion__description-block__text h5 {
+  margin-bottom: 15px;
+}
+.profile__promotions-container__promotions__promotion__description-block__text p {
+  margin-bottom: 5px;
+  font-size: 24px;
 }
 .profile__promotions-container__promotions__promotion:hover {
   box-shadow: -3px 5px 22px 5px #aaa8a8;
@@ -450,6 +459,8 @@ header {
 }
 
 .list-products {
+  width: 80%;
+  flex-wrap: wrap;
   display: flex;
   flex-direction: row;
   align-items: center;

@@ -6,7 +6,9 @@ const SheduleController = require("../controller/sheduleController");
 
 router.post("/", SheduleController.create);
 router.get("/", SheduleController.getAll);
+router.get("/byId", SheduleController.getAllById);
 router.get("/:id", SheduleController.getOne);
-router.delete("/del/:id", SheduleController.deleteById);
+router.post("/update", SheduleController.updateById);
+router.post("/del", SheduleController.deleteById);
 
 module.exports = router
