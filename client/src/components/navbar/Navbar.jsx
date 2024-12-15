@@ -41,7 +41,7 @@ function Navbar() {
 
     return (
         <div>
-            <header>
+            <header className="navbar_container">
                 <a class="logo-link m-left-26" onClick={() => { navigate(MAIN_ROUTE); }} >
                     <img src={ImgLogo} />
                 </a>

@@ -102,7 +102,7 @@ function Profile() {
                         <div class="profile__promotions-container__promotions">
                             <div class="profile__promotions-container__promotions__promotion">
                                 <div class="profile__promotions-container__promotions__promotion__img-container">
-                                    <p>Дата: {item.timeAndDate ? item.timeAndDate.slice(0, 10) : "Дата не указана"}</p>
+                                    <p>Дата: {item.updatedAt ? item.updatedAt.slice(0, 10) : "Дата не указана"}</p>
                                     <p>Id товара: {item.productId}</p>
                                 </div>
 

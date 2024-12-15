@@ -39,6 +39,10 @@ header {
   margin-left: 26px;
 }
 
+.navbar_container {
+  width: 100%;
+}
+
 .navbar {
   width: 311px;
   margin-right: 150px;
@@ -981,4 +985,27 @@ header {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+}
+
+.folter_container {
+  width: 80%;
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  align-content: stretch;
+  justify-content: center;
+  flex-direction: row;
+  margin-bottom: 40px;
+}
+
+.product__filter__input {
+  width: 327px;
+  height: 50px;
+  color: rgba(0, 0, 0, 0.5);
+  font-size: 32px;
+  font-family: "Andika", sans-serif;
+  text-align: center;
+  border: 3px solid #000000;
+  border-radius: 25px;
+  margin-left: -20px;
 }
