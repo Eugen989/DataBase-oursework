@@ -17,7 +17,8 @@ function PrintJewlery() {
     const [filterProductWeight, setFilterProductWeight] = useState();
     const [filterProductGem, setFilterProductGem] = useState();
     const [filterProductPurity, setFilterProductPurity] = useState();
-    const [filterProductCost, setFilterProductCost] = useState();
+    const [filterProductMaxCost, setFilterProductMaxCost] = useState();
+    const [filterProductMinCost, setFilterProductMinCost] = useState();
 
     const loadProducts = async () => {
         let data = await backend_get_products();
@@ -54,6 +55,69 @@ function PrintJewlery() {
         return (<div> {value} </div>)
     }
 
+    const [image, setImage] = useState(null);
+    const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
+    const [result, setResult] = useState(null);
+
+    const handleImageChange = (e) => {
+        e.preventDefault();
+        let file = e.target.files[0];
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImage(file);
+                setImagePreviewUrl(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData();
+        formData.append("file", image);
+
+        try {
+            const response = await fetch("http://localhost:8000/uploadfile/", {
+                method: "POST",
+                body: formData,
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const data = await response.json();
+            setResult(data.filename);
+
+            let peopleMaxMoney, peopleMinMoney;
+
+            if(result == 'White') {
+                setFilterProductMaxCost(55000);
+                setFilterProductMinCost(20000);
+            }
+            else if(result == 'Black') {
+                setFilterProductMaxCost(12000);
+                setFilterProductMinCost(5000);
+            }
+
+            else if(result == 'Indian') {
+                setFilterProductMaxCost(60000);
+                setFilterProductMinCost(30000);
+            }
+
+            else if(result == 'Asian') {
+                setFilterProductMaxCost(40000);
+                setFilterProductMinCost(12000);
+            }
+
+        } catch (error) {
+            console.error("Ошибка при отправке изображения:", error);
+        }
+    };
+
     return (
         <div>
             <div className="folter_container">
@@ -75,8 +139,25 @@ function PrintJewlery() {
                 <renderFilter value={filterProductPurity} />
                 <input className="product__filter__input" placeholder="Чистота" onChange={e => setFilterProductPurity(e.target.value)} />
                 
-                <renderFilter value={filterProductCost} />
-                <input className="product__filter__input" placeholder="Стоимость" onChange={e => setFilterProductCost(e.target.value)} />
+                <renderFilter value={filterProductMaxCost} />
+                <input className="product__filter__input" placeholder="Максимальная стоимость" onChange={e => setFilterProductMaxCost(e.target.value)} />
+
+                <renderFilter value={filterProductMaxCost} />
+                <input className="product__filter__input" placeholder="Минимальная стоимость" onChange={e => setFilterProductMinCost(e.target.value)} />
+            </div>
+            <div>
+
+            <form onSubmit={handleSubmit}>
+                <input type="file" accept="image/*" onChange={handleImageChange} />
+                {imagePreviewUrl && (
+                    <div>
+                        <img src={imagePreviewUrl} style={{ width: '100px', height: 'auto', marginTop: '10px' }} />
+                    </div>
+                )}
+                <button type="submit">Загрузить изображение</button>
+            </form>
+            {result && <p>Результат: {result}, Максимум денег - {filterProductMaxCost}, Минимум денег - {filterProductMinCost}</p>}
+
             </div>
             <div className="list-products">
                 {Array.isArray(toJS(user.product)) && toJS(user.product).map(item => (
@@ -87,7 +168,8 @@ function PrintJewlery() {
                         (String(item.type).indexOf(filterProductGem) != -1 || !filterProductGem) &&
                         (String(item.weight).indexOf(filterProductWeight) != -1 || !filterProductWeight) &&
                         (String(item.purity).indexOf(filterProductPurity) != -1 || !filterProductPurity) &&
-                        (String(item.cost).indexOf(filterProductCost) != -1 || !filterProductCost)
+                        (!filterProductMinCost || Number(item.cost) > filterProductMinCost) &&
+                        (!filterProductMaxCost || Number(item.cost) < filterProductMaxCost)
                         ? (
                         <div>
                             <div className="list-products__product" key={item.productId}>
